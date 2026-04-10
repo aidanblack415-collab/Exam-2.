@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USCP Practice Test - 50 Questions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      margin: 0;
+      background: #f4f6f8;
+      color: #111;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+    .meta {
+      margin-bottom: 18px;
+      color: #444;
+    }
+    .progress {
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .question {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+    .choice {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      border: 1px solid #d0d7de;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #fafbfc;
+    }
+    .choice:hover {
+      background: #f0f4f8;
+    }
+    .choice input {
+      margin-right: 10px;
+    }
+    .btns {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      background: #0b57d0;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:disabled {
+      background: #9aa0a6;
+      cursor: not-allowed;
+    }
+    .feedback {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      display: none;
+    }
+    .correct {
+      background: #e6f4ea;
+      border: 1px solid #a8dab5;
+    }
+    .incorrect {
+      background: #fce8e6;
+      border: 1px solid #f3b8b2;
+    }
+    .summary {
+      display: none;
+    }
+    .small {
+      color: #555;
+      font-size: 14px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef3fd;
+      margin-right: 8px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>USCP Practice Test</h1>
+    <div class="meta">
+      <span class="pill">50 Questions</span>
+      <span class="pill">Multiple Choice A-D</span>
+      <span class="pill">Instant Feedback</span>
+    </div>
+
+    <div id="quiz">
+      <div class="progress" id="progress"></div>
+      <div class="small" id="scoreLine"></div>
+      <div class="question" id="question"></div>
+      <form id="choicesForm"></form>
+      <div class="btns">
+        <button id="checkBtn" type="button">Check Answer</button>
+        <button id="nextBtn" type="button" disabled>Next Question</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="summary" id="summary">
+      <h2>Test Complete</h2>
+      <p id="finalScore"></p>
+      <p id="finalPercent"></p>
+      <button id="restartBtn" type="button">Restart Test</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Officers respond to a domestic call between former dating partners who no longer live together. The complainant says the suspect shoved her into a wall during an argument, causing pain but no visible injury. She now says she does not want him arrested. What is the best action?",
+        choices: {
+          A: "Issue a citation release because there is no visible injury",
+          B: "Make an arrest if probable cause exists because an intra-family offense causing physical pain triggers mandatory arrest",
+          C: "Separate them, document it, and leave because the victim declined prosecution",
+          D: "Arrest both parties unless one admits fault"
+        },
+        answer: "B",
+        explanation: "Mandatory arrest applies when probable cause exists for an intra-family offense resulting in physical injury, pain, illness, or reasonable fear of serious death or injury. Domestic violence is treated as lockup, not citation release."
+      },
+      {
+        q: "At a scene involving spouses, both parties have injuries. The husband has superficial scratches on his forearm. The wife has bruising on her torso and is visibly fearful, keeps glancing at him before answering, and says she scratched him while trying to get away. What is the best approach?",
+        choices: {
+          A: "Arrest both because both parties have injuries",
+          B: "Do not arrest anyone because the stories conflict",
+          C: "Determine the primary aggressor using body language, injury severity, physical evidence, and whose story fits the scene",
+          D: "Arrest the person who called 911 because callers usually initiate the disturbance"
+        },
+        answer: "C",
+        explanation: "In cross-complaint situations, officers must determine the primary aggressor rather than defaulting to a dual arrest. Fear, significant injuries, physical evidence, and consistency with the scene matter."
+      },
+      {
+        q: "A victim says her boyfriend put both hands around her neck for several seconds. She now has a raspy voice and tiny broken blood vessels around her eyes but says she feels okay and refuses EMS. What is the best response?",
+        choices: {
+          A: "Honor the refusal and clear the scene if no external neck marks are present",
+          B: "Call for medical assistance because strangulation can cause delayed death and internal injury not visible externally",
+          C: "Only photograph the injuries and advise her to seek care if symptoms worsen next week",
+          D: "Treat it as simple harassment because she did not lose consciousness"
+        },
+        answer: "B",
+        explanation: "Strangulation is highly dangerous. Officers should look for voice changes, breathing changes, red marks, and petechiae, and should call for medical assistance because death can occur later."
+      },
+      {
+        q: "A victim blurts out, 'My wife hit me with the lamp!' immediately after officers ask, 'What happened here?' even before a formal interview begins. How should this statement be treated?",
+        choices: {
+          A: "As inadmissible hearsay because it was not recorded",
+          B: "As impeachment only, not substantive evidence",
+          C: "As an excited utterance that may be admissible",
+          D: "As unusable unless repeated in a written affidavit"
+        },
+        answer: "C",
+        explanation: "Statements spontaneously blurted out without detailed questioning can qualify as excited utterances and may be admissible in court."
+      },
+      {
+        q: "An officer is writing a report for an assault between people who share a child in common. Which report choice is most accurate?",
+        choices: {
+          A: "List the classification only and avoid using the term domestic violence unless married",
+          B: "Use the actual offense classification, but begin the narrative with the words 'Domestic Violence'",
+          C: "Classify every such case only as domestic violence instead of the underlying offense",
+          D: "Use family dispute unless there are visible injuries"
+        },
+        answer: "B",
+        explanation: "The offense remains the underlying crime, but the narrative should begin with 'Domestic Violence' in these cases."
+      },
+      {
+        q: "An officer encounters a valid protective order issued in another state. The respondent is present near the protected person in apparent violation. What is the best statement of law?",
+        choices: {
+          A: "The order is not enforceable unless re-issued locally",
+          B: "Only orders from D.C. courts can support enforcement",
+          C: "Out-of-state orders receive full faith and credit under VAWA and can be verified through NCIC Protection Order File",
+          D: "The order is civil only and can never support an arrest"
+        },
+        answer: "C",
+        explanation: "Under VAWA, qualifying protection orders from other jurisdictions receive full faith and credit and may be enforced after verification."
+      },
+      {
+        q: "You are first on the scene of a burglary with obvious signs of forced entry. The homeowner keeps trying to walk around and point things out. What is the best immediate action?",
+        choices: {
+          A: "Let the homeowner walk the scene because it is their property",
+          B: "Have the homeowner begin photographing the scene for you",
+          C: "Secure the scene, establish a perimeter, control access, and separate complainants and suspects from the scene",
+          D: "Search every room immediately before notifying anyone"
+        },
+        answer: "C",
+        explanation: "Once you determine a crime scene exists, secure it, establish a perimeter, control access, document entries and exits, and separate involved persons from the scene."
+      },
+      {
+        q: "At a crime scene, you discover a handgun lying near a suspect who has already been detained. There is no immediate safety threat from the weapon because the area is secure. What should you do?",
+        choices: {
+          A: "Unload it immediately so it is safe for photographs",
+          B: "Leave it for crime scene personnel to document unless movement is necessary for safety or preservation",
+          C: "Eject the magazine and clear the chamber, then replace it in the same spot",
+          D: "Pocket it temporarily and mention it later in the report"
+        },
+        answer: "B",
+        explanation: "Officers should avoid moving evidence unless necessary. Firearms generally should not be unloaded at the scene because of safety and evidentiary concerns."
+      },
+      {
+        q: "Why is unloading a firearm at a crime scene specifically discouraged in your notes?",
+        choices: {
+          A: "It is only discouraged because officers may damage the magazine spring",
+          B: "It creates fingerprint issues only, but no charging impact",
+          C: "It can endanger the officer due to unfamiliar weapon systems and may also undermine proof that the weapon was loaded",
+          D: "Because crime scene personnel are the only ones legally allowed to touch any gun"
+        },
+        answer: "C",
+        explanation: "The notes stress both safety and evidentiary reasons: unfamiliar actions can cause discharge, and changing the loaded condition can hurt prosecution."
+      },
+      {
+        q: "Heavy rain is starting at a drug scene where suspected narcotics are lying exposed on the ground. What is the best response?",
+        choices: {
+          A: "Leave the drugs untouched no matter what so CSS can see them in place",
+          B: "Collect or protect the substance to prevent loss, then document original location and chain of custody",
+          C: "Kick the drugs under cover and wait for crime scene",
+          D: "Field test them immediately without another officer present"
+        },
+        answer: "B",
+        explanation: "If evidence will be compromised by environmental conditions, the officer should preserve it and thoroughly document the original location and chain of custody."
+      },
+      {
+        q: "A detective asks whether you searched the arrestee’s phone at the scene to look for threatening messages. What is the correct response based on your training notes?",
+        choices: {
+          A: "Yes, a quick scroll is allowed if the phone may contain evidence",
+          B: "Only the arresting officer may search it without limitation",
+          C: "No. Officers should not search cellphones at the scene and should contact Investigations Division and CSS",
+          D: "Yes, if the phone is unlocked and within arm’s reach"
+        },
+        answer: "C",
+        explanation: "The notes are direct: do not search cellphones of arrestees that may contain evidence. Contact Investigations Division and CSS."
+      },
+      {
+        q: "Which statement best captures the purpose of chain of custody documentation?",
+        choices: {
+          A: "It proves where the suspect was arrested",
+          B: "It records each person who possessed each item of evidence and the sequence of possession",
+          C: "It replaces the need to describe evidence in the report",
+          D: "It only matters for narcotics cases"
+        },
+        answer: "B",
+        explanation: "Chain of custody tracks who handled the evidence and in what sequence so the integrity of the item can be proven later."
+      },
+      {
+        q: "Officers respond to a report of a suspicious man in a cafeteria opening food packages, ignoring commands, repeating 'These are my chips,' and acting defensive. He avoids eye contact and seems fixated. What should officers keep in mind first?",
+        choices: {
+          A: "These behaviors automatically indicate intoxication",
+          B: "These behaviors may be consistent with autism and should not be misread immediately as defiance alone",
+          C: "Avoid speaking because silence is always best",
+          D: "Use rapid-fire commands to establish control"
+        },
+        answer: "B",
+        explanation: "Autism-related behavior can be mistaken for noncompliance, intoxication, or suspicious behavior. Officers should consider ASD indicators before escalating."
+      },
+      {
+        q: "A teenager with autism begins screaming, hand-flapping, and pulling away after officers arrive with sirens, lights, and a K-9. What is the best de-escalation step if safe to do so?",
+        choices: {
+          A: "Reduce sensory input by removing stimuli, maintaining distance, and using calm simple language",
+          B: "Close distance quickly to establish physical dominance",
+          C: "Keep repeating longer commands until eye contact is made",
+          D: "Interpret the pulling away as active resistance and increase force immediately"
+        },
+        answer: "A",
+        explanation: "The notes emphasize managing the sensory environment, using calm short language, patience, and safe distance when possible."
+      },
+      {
+        q: "During a field encounter, a person believed to have autism does not answer commands right away. Based on the training, what is best?",
+        choices: {
+          A: "Treat any delay as refusal",
+          B: "Allow 10–15 seconds for delayed response before assuming noncompliance",
+          C: "Repeat the same command louder every two seconds",
+          D: "Physically move the person immediately if they do not respond on first command"
+        },
+        answer: "B",
+        explanation: "People with autism may have delayed processing. The notes specifically advise allowing 10–15 seconds for response."
+      },
+      {
+        q: "You are searching for a missing autistic child who wandered away from a caregiver. Which search area deserves immediate attention?",
+        choices: {
+          A: "Only bus stops because autistic persons prefer crowds",
+          B: "Water sources such as pools and fountains",
+          C: "Only the child’s bedroom because they usually return home",
+          D: "Parking garages only after checking social media"
+        },
+        answer: "B",
+        explanation: "The notes specifically stress checking water sources early because drowning is a leading cause of death in these incidents."
+      },
+      {
+        q: "An officer interviewing a person with autism interprets poor eye contact as deceit. Why is that a mistake?",
+        choices: {
+          A: "Because autistic people always tell the truth",
+          B: "Because autism can impair social interaction and eye contact without indicating deception",
+          C: "Because officers are not allowed to evaluate demeanor",
+          D: "Because eye contact is irrelevant in all interviews"
+        },
+        answer: "B",
+        explanation: "Limited eye contact in autism may reflect social and communication differences, not dishonesty or disrespect."
+      },
+      {
+        q: "A restrained autistic person continues to struggle after a takedown. What is the best officer safety and medical response?",
+        choices: {
+          A: "Keep the person prone the entire time to maximize control",
+          B: "Turn the person on their side often, monitor closely, and keep using calm communication",
+          C: "Ignore their medical condition because restraint has already solved the problem",
+          D: "Stand directly behind them to prevent sudden movement"
+        },
+        answer: "B",
+        explanation: "The notes warn about positional asphyxia and seizure risk. Officers should turn the person on their side often and monitor condition frequently."
+      },
+      {
+        q: "Which combination best states the goals of uniformed personnel and protective teams during a protectee visit?",
+        choices: {
+          A: "Protect from theft, traffic, fatigue, and delays",
+          B: "Protect from assassination, personal injury, kidnapping, embarrassment, and keep the protectee on schedule",
+          C: "Protect the press, motorcade vehicles, and building furniture",
+          D: "Protect only against physical attacks because embarrassment is not a security concern"
+        },
+        answer: "B",
+        explanation: "The notes list these goals specifically, including protection from embarrassment and maintaining schedule."
+      },
+      {
+        q: "An officer working an outer perimeter post asks what the main functions there include. Which answer is best?",
+        choices: {
+          A: "Sound-off, cover, evacuate, arm-reach only",
+          B: "Fixed posts for pedestrian and vehicular access control with Protective Intelligence teams",
+          C: "Only magnetometer screening and x-ray of packages",
+          D: "Only the visiting agency operates there"
+        },
+        answer: "B",
+        explanation: "The outer perimeter includes fixed posts, pedestrian and vehicular access control, and Protective Intelligence teams."
+      },
+      {
+        q: "Why is a protectee often considered most vulnerable during departure?",
+        choices: {
+          A: "Because departure is always less staffed than arrival",
+          B: "Because the assailant is more likely to know the departure location and timing based on motorcade and officer actions",
+          C: "Because the inner perimeter disappears entirely at departure",
+          D: "Because magnetometers are usually shut off after the event"
+        },
+        answer: "B",
+        explanation: "The notes emphasize that assailants can better predict departure timing and location, especially by observing preparation."
+      },
+      {
+        q: "Which of the following is one of the three required elements for an assault on a protectee to take place?",
+        choices: {
+          A: "Media presence",
+          B: "A motorcade",
+          C: "Opportunity",
+          D: "A prior threat assessment"
+        },
+        answer: "C",
+        explanation: "The three elements listed are protectee present, assailant present, and opportunity."
+      },
+      {
+        q: "While staffing an inner-perimeter route, what is the best movement principle for an escorting officer?",
+        choices: {
+          A: "Stay directly beside the protectee at all times even if it blocks route clearing",
+          B: "Remain far behind so the protectee is never delayed",
+          C: "Maintain enough distance ahead to clear the route without delaying protectee movement",
+          D: "Move unpredictably behind the protectee and ignore the route"
+        },
+        answer: "C",
+        explanation: "Escort officers should stay sufficiently ahead to clear the route while avoiding delays."
+      },
+      {
+        q: "Immediately after an assault on a protectee, which action below is among the most appropriate officer responsibilities?",
+        choices: {
+          A: "Focus only on first aid and ignore witnesses until investigators arrive",
+          B: "Disarm or neutralize the threat, anticipate multiple assailants, and assist in evacuation if appropriate",
+          C: "Leave the area once the protectee is moved",
+          D: "Avoid any crime scene action because protection details handle everything"
+        },
+        answer: "B",
+        explanation: "The notes stress neutralizing the threat, recognizing possible multiple attackers or diversion, and assisting evacuation."
+      },
+      {
+        q: "An officer on year 10 of patrol starts cutting corners on vehicle approaches because 'nothing ever happens here.' Which deadly error is most directly involved?",
+        choices: {
+          A: "Tombstone courage",
+          B: "Complacency",
+          C: "Failure to handcuff",
+          D: "False assumptions"
+        },
+        answer: "B",
+        explanation: "Complacency is specifically described as apathy, carelessness, and losing focus over time."
+      },
+      {
+        q: "An officer places himself between a vehicle’s door frame and the suspect while another officer covers from the opposite angle, creating both a positional disadvantage and a crossfire issue. Which deadly error is most directly shown?",
+        choices: {
+          A: "Taking a bad position",
+          B: "Relaxing too soon",
+          C: "Poor search",
+          D: "Not enough rest"
+        },
+        answer: "A",
+        explanation: "Taking a bad position includes disadvantage relative to a vehicle, building, subject, or other officer, including crossfire exposure."
+      },
+      {
+        q: "An officer arrests a subject after a brief struggle, talks with witnesses, and only later decides to handcuff because the suspect 'seems calm now.' Which deadly error best fits?",
+        choices: {
+          A: "False assumptions",
+          B: "Failure to watch hands",
+          C: "Failure to handcuff",
+          D: "Tombstone courage"
+        },
+        answer: "C",
+        explanation: "Once an arrest is made, proper handcuffing is critical. The notes emphasize that hands can kill you."
+      },
+      {
+        q: "A sleepy officer working overtime begins missing obvious cues and nearly nods off in the cruiser. Which deadly error is most directly implicated?",
+        choices: {
+          A: "Not enough rest/fatigued",
+          B: "Relaxing too soon",
+          C: "Complacency",
+          D: "Poor search"
+        },
+        answer: "A",
+        explanation: "Fatigue endangers the officer, community, and other officers, and is specifically identified as one of the ten deadly errors."
+      },
+      {
+        q: "A solo officer sees a barricaded armed suspect but rushes in without waiting for backup even though the scene is contained. Which deadly error best applies?",
+        choices: {
+          A: "Failure to recognize danger signs",
+          B: "Tombstone courage",
+          C: "Failure to watch hands",
+          D: "Relaxing too soon"
+        },
+        answer: "B",
+        explanation: "Tombstone courage means acting alone in dangerous situations when time allows waiting for backup."
+      },
+      {
+        q: "An employee has been out sick for five consecutive duty days and is returning to duty. What is required according to the notes?",
+        choices: {
+          A: "Nothing if the employee feels better",
+          B: "Only an oral statement to a coworker",
+          C: "A medical certificate specifying the appropriate duty status",
+          D: "A leave slip only after the first day back"
+        },
+        answer: "C",
+        explanation: "A physician’s note is required after more than four consecutive duty days and must state full duty, restricted duty, or non-duty status as appropriate."
+      },
+      {
+        q: "Which statement about sick leave accrual is correct?",
+        choices: {
+          A: "Employees accrue 8 hours every pay period, totaling 26 days annually",
+          B: "Employees accrue 4 hours every two weeks, totaling 104 hours or 13 days annually",
+          C: "Employees accrue 13 hours monthly",
+          D: "Sick leave is not accrued and must be approved case-by-case"
+        },
+        answer: "B",
+        explanation: "The notes state 4 hours every two weeks for a total of 104 hours or 13 days per year."
+      },
+      {
+        q: "An employee is off-duty and wakes up ill on a workday. What is the proper reporting step?",
+        choices: {
+          A: "Notify the organizational element or supervisor at least one hour before reporting time",
+          B: "Wait until the tour starts and then text a coworker",
+          C: "Report only if the illness continues more than two days",
+          D: "Call OSHA first"
+        },
+        answer: "A",
+        explanation: "For off-duty illness, the employee must notify the organizational element or supervisor at least one hour before the shift."
+      },
+      {
+        q: "An employee in non-duty status wants to take a weekend trip out of town that is unrelated to medical treatment. What is required?",
+        choices: {
+          A: "No approval is needed if the employee feels able to travel",
+          B: "Travel is prohibited in every circumstance",
+          C: "Supervisor approval is required except for medical treatment, medication, or personal essentials",
+          D: "Only court appearances require approval"
+        },
+        answer: "C",
+        explanation: "Employees in non-duty status must obtain approval for travel except for limited stated reasons."
+      },
+      {
+        q: "Which form is tied to temporary disability reporting in the notes?",
+        choices: {
+          A: "CP-60",
+          B: "CP-542",
+          C: "PD-81",
+          D: "CA-16"
+        },
+        answer: "B",
+        explanation: "CP-542 is the Report of Temporary Disability referenced in the illness and injury section."
+      },
+      {
+        q: "A pre-screener takes over an exterior post. Which action is part of proper start-of-shift procedure?",
+        choices: {
+          A: "Immediately begin screening without checking the post because prior shift handled that",
+          B: "Ensure all equipment and items associated with the post are present and operable, including the emergency lockdown button",
+          C: "Focus only on the x-ray machine because pre-screeners do not handle deterrence",
+          D: "Move the WTM to improve traffic flow"
+        },
+        answer: "B",
+        explanation: "Pre-screeners must ensure equipment is present and operable, including the emergency lockdown button."
+      },
+      {
+        q: "Which best describes establishing an environmental baseline at an entrance?",
+        choices: {
+          A: "Memorizing every visitor’s face",
+          B: "Conducting a systematic check of the surroundings to determine what should and should not be present",
+          C: "Relying only on previous shift notes",
+          D: "Watching only for persons carrying bags"
+        },
+        answer: "B",
+        explanation: "Environmental baseline means checking the surroundings and noting anything out of place, such as hidden devices or unattended items."
+      },
+      {
+        q: "A package is too large to fit through the x-ray machine. What should happen?",
+        choices: {
+          A: "It automatically bypasses inspection if the person appears cooperative",
+          B: "It is denied entry no matter what",
+          C: "The package should be physically inspected to detect weapons, explosives, or prohibited items",
+          D: "Only a supervisor may touch it"
+        },
+        answer: "C",
+        explanation: "If x-ray is unavailable or an item is too large, the screener physically inspects it."
+      },
+      {
+        q: "What happens when the large green lockdown button on the podium is pushed?",
+        choices: {
+          A: "Only the x-ray shuts down",
+          B: "Maglocks activate, Stentofone opens a direct line to Communications, and post cameras are brought to the Watch Commander’s attention",
+          C: "The building fire alarm sounds and all doors unlock",
+          D: "Nothing unless approved first by a supervisor"
+        },
+        answer: "B",
+        explanation: "The notes list these three lockdown button effects specifically."
+      },
+      {
+        q: "A visitor voluntarily surrenders a legal nonperishable prohibited item at screening because they have no way to secure it elsewhere. Which document is used?",
+        choices: {
+          A: "CP-50 only",
+          B: "PD-251 only",
+          C: "CP-103A, along with a PD-81 for the surrendered property",
+          D: "CP-542"
+        },
+        answer: "C",
+        explanation: "CP-103A is the Receipt for Contraband for Destruction, and the notes also require a PD-81 on the surrendered property."
+      },
+      {
+        q: "During an after-hours building check, an unsecured congressional office is found unoccupied and cannot be secured. Which document should reflect that observation and action taken?",
+        choices: {
+          A: "CP-50",
+          B: "CP-103A",
+          C: "PD-252",
+          D: "CA-1"
+        },
+        answer: "A",
+        explanation: "CP-50 is used for building checks and to document unsecured congressional offices, including time, room number, observations, and action taken."
+      },
+      {
+        q: "When performing building checks, what is an officer specifically expected to do with door handles?",
+        choices: {
+          A: "Visually inspect them only",
+          B: "Photograph them if closed",
+          C: "Physically shake all door handles",
+          D: "Leave them untouched unless there is forced entry"
+        },
+        answer: "C",
+        explanation: "The notes specifically say officers should physically shake all door handles during building checks."
+      },
+      {
+        q: "A suspicious fire causes injuries and appears possibly criminal in origin. Which report handling is most appropriate?",
+        choices: {
+          A: "PD-251 with only a CFN because fire cases are never criminal",
+          B: "PD-251 reflecting both a CFN and CCN",
+          C: "CP-50 only",
+          D: "No report until the fire department determines cause"
+        },
+        answer: "B",
+        explanation: "If the fire is suspicious, causes injury or death, or suggests criminal activity, the notes call for a PD-251 with both a CFN and CCN."
+      },
+      {
+        q: "What is a Yellow Alert primarily associated with?",
+        choices: {
+          A: "Routine patrol rotation changes",
+          B: "A search for any object or person hidden or placed in a way that may damage property or endanger lives",
+          C: "A completed evacuation after a confirmed fire",
+          D: "A traffic accident response only"
+        },
+        answer: "B",
+        explanation: "Yellow Alerts involve systematic searches for suspicious packages, unauthorized persons, or other security threats."
+      },
+      {
+        q: "What is the primary purpose of patrol according to the notes?",
+        choices: {
+          A: "To reduce paperwork",
+          B: "To ensure only members of Congress may access the grounds",
+          C: "To ensure the safety and security of Capitol buildings, grounds, and persons while deterring crime, disorder, and terrorism",
+          D: "To maximize arrests"
+        },
+        answer: "C",
+        explanation: "Patrol is meant to deter misconduct and ensure safety, accessibility, and security across the Capitol complex."
+      },
+      {
+        q: "At the start of a shift, which WTM check is required?",
+        choices: {
+          A: "Ensure the WTM is connected to power, alarms when metal passes through, and zone lights work",
+          B: "Move the WTM closer to the doorway if needed",
+          C: "Run only one test pass every week",
+          D: "Disable zone lights to prevent visitors from seeing them"
+        },
+        answer: "A",
+        explanation: "Before each shift, officers verify power, alarm function, and zone light operation."
+      },
+      {
+        q: "Who is allowed to move or adjust the walk-through magnetometer?",
+        choices: {
+          A: "Any sworn officer assigned to the post",
+          B: "Only Security Services Bureau employees and USCP-approved vendors",
+          C: "Only the Watch Commander",
+          D: "Any officer after notifying Communications"
+        },
+        answer: "B",
+        explanation: "Officers cannot move or adjust the WTM; only Security Services Bureau personnel and approved vendors may do so."
+      },
+      {
+        q: "A current Member of Congress escorts three visitors who are not exempt from screening and insists they all bypass screening. What is the best action?",
+        choices: {
+          A: "Deny entry to everyone",
+          B: "Allow entry without documenting it",
+          C: "Firmly and courteously advise screening requirements, allow the Member and guests to enter if the Member insists, document the Member’s name, number of guests, and time on a CP-60, and notify a supervisor",
+          D: "Arrest the guests for refusing screening"
+        },
+        answer: "C",
+        explanation: "That is the exact procedure described in the notes for a Member of Congress escorting non-exempt individuals."
+      },
+      {
+        q: "During open building hours, a congressional staffer approaches a staff or visitor entrance but does not display identification. How should the screener treat the person?",
+        choices: {
+          A: "As exempt because staff do not need to display ID if recognized",
+          B: "As a visitor",
+          C: "As automatically denied entry for the day",
+          D: "As a law enforcement exemption"
+        },
+        answer: "B",
+        explanation: "If staff do not show identification, they are treated as a visitor."
+      },
+      {
+        q: "What is the correct initial positioning for an officer screening with a WTM?",
+        choices: {
+          A: "Stand directly inside the arch so you can stop people faster",
+          B: "Stand six feet behind the arch facing away from traffic",
+          C: "Stand approximately two feet away from the WTM and face the incoming flow of people",
+          D: "Stand beside the x-ray machine only"
+        },
+        answer: "C",
+        explanation: "The notes specify standing about two feet from the WTM and facing the incoming flow."
+      },
+      {
+        q: "Which person below is listed as exempt from screening requirements in the notes?",
+        choices: {
+          A: "Any congressional intern after hours",
+          B: "Any staff member without a BAC",
+          C: "Armed law enforcement officers with proper credentials",
+          D: "Any visitor carrying a secure package"
+        },
+        answer: "C",
+        explanation: "Exemptions include armed law enforcement officers with proper credentials, certain officials, USCP sworn employees, and others specifically listed."
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    const progressEl = document.getElementById("progress");
+    const scoreLineEl = document.getElementById("scoreLine");
+    const questionEl = document.getElementById("question");
+    const choicesForm = document.getElementById("choicesForm");
+    const feedbackEl = document.getElementById("feedback");
+    const checkBtn = document.getElementById("checkBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const quizEl = document.getElementById("quiz");
+    const summaryEl = document.getElementById("summary");
+    const finalScoreEl = document.getElementById("finalScore");
+    const finalPercentEl = document.getElementById("finalPercent");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function renderQuestion() {
+      answered = false;
+      feedbackEl.style.display = "none";
+      feedbackEl.className = "feedback";
+      checkBtn.disabled = false;
+      nextBtn.disabled = true;
+
+      const q = questions[current];
+      progressEl.textContent = `Question ${current + 1} of ${questions.length}`;
+      scoreLineEl.textContent = `Score: ${score} / ${questions.length}`;
+      questionEl.textContent = q.q;
+
+      choicesForm.innerHTML = "";
+      Object.entries(q.choices).forEach(([letter, text]) => {
+        const label = document.createElement("label");
+        label.className = "choice";
+        label.innerHTML = `
+          <input type="radio" name="answer" value="${letter}">
+          <strong>${letter}.</strong> ${text}
+        `;
+        choicesForm.appendChild(label);
+      });
+    }
+
+    function checkAnswer() {
+      if (answered) return;
+
+      const selected = document.querySelector('input[name="answer"]:checked');
+      if (!selected) {
+        feedbackEl.style.display = "block";
+        feedbackEl.className = "feedback incorrect";
+        feedbackEl.innerHTML = "<strong>Select an answer first.</strong>";
+        return;
+      }
+
+      const q = questions[current];
+      const userAnswer = selected.value;
+      const correct = q.answer === userAnswer;
+
+      if (correct) score++;
+
+      answered = true;
+      checkBtn.disabled = true;
+      nextBtn.disabled = false;
+      feedbackEl.style.display = "block";
+      feedbackEl.className = "feedback " + (correct ? "correct" : "incorrect");
+      feedbackEl.innerHTML = `
+        <strong>${correct ? "Correct." : "Incorrect."}</strong>
+        The correct answer is <strong>${q.answer}</strong>.<br><br>
+        ${q.explanation}
+      `;
+
+      scoreLineEl.textContent = `Score: ${score} / ${questions.length}`;
+    }
+
+    function nextQuestion() {
+      if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+      } else {
+        showSummary();
+      }
+    }
+
+    function showSummary() {
+      quizEl.style.display = "none";
+      summaryEl.style.display = "block";
+      const percent = ((score / questions.length) * 100).toFixed(1);
+      finalScoreEl.textContent = `Final Score: ${score} / ${questions.length}`;
+      finalPercentEl.textContent = `Percentage: ${percent}%`;
+    }
+
+    function restartTest() {
+      current = 0;
+      score = 0;
+      quizEl.style.display = "block";
+      summaryEl.style.display = "none";
+      renderQuestion();
+    }
+
+    checkBtn.addEventListener("click", checkAnswer);
+    nextBtn.addEventListener("click", nextQuestion);
+    restartBtn.addEventListener("click", restartTest);
+
+    renderQuestion();
+  </script>
+</body>
+</html>
